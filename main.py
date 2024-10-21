@@ -31,9 +31,9 @@ def random_think(min_time=0.5, max_time=2):
     return round(sleep_time, 2)
 
 if __name__ == '__main__':
-    city_list = get_city_list()  # 获取城市列表
-    print(city_list[0])
-    SaveCityBorderIntoDB(city_list[0])  # 下载城市区域数据
+    # city_list = get_city_list()  # 获取城市列表
+    # print(city_list[1])
+    SaveCityBorderIntoDB('北京')  # 下载城市区域数据
 
     # # tqdm 进度条循环显示城市名称
     # for city in tqdm.tqdm(city_list, desc="正在处理城市数据"):
