@@ -246,6 +246,7 @@ class Lianjia():
 
 def SaveCityBorderIntoDB(city):  # 读取某市各个区域轮廓
     ret = Lianjia(city).GetDistrictInfo()
+    print(ret)
     conn = sqlite3.connect('district.db')  # 链接数据库
     cursor = conn.cursor()
     try:

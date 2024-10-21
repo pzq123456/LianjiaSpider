@@ -32,54 +32,56 @@ def random_think(min_time=0.5, max_time=2):
 
 if __name__ == '__main__':
     city_list = get_city_list()  # 获取城市列表
+    print(city_list[0])
+    SaveCityBorderIntoDB(city_list[0])  # 下载城市区域数据
 
-    # tqdm 进度条循环显示城市名称
-    for city in tqdm.tqdm(city_list, desc="正在处理城市数据"):
-        tqdm.tqdm.write(f"开始处理城市: {city}")
+    # # tqdm 进度条循环显示城市名称
+    # for city in tqdm.tqdm(city_list, desc="正在处理城市数据"):
+    #     tqdm.tqdm.write(f"开始处理城市: {city}")
 
-        try:
-            # 模拟人类的短暂思考/延迟
-            think_time = random_think()
-            tqdm.tqdm.write(f"模拟思考 {think_time} 秒")
+    #     try:
+    #         # 模拟人类的短暂思考/延迟
+    #         think_time = random_think()
+    #         tqdm.tqdm.write(f"模拟思考 {think_time} 秒")
 
-            SaveCityBorderIntoDB(city)  # 下载城市区域数据
+    #         SaveCityBorderIntoDB(city)  # 下载城市区域数据
 
-            # 在下载数据间加入短暂停顿
-            think_time = random_think()
-            tqdm.tqdm.write(f"模拟短暂停顿 {think_time} 秒")
+    #         # 在下载数据间加入短暂停顿
+    #         think_time = random_think()
+    #         tqdm.tqdm.write(f"模拟短暂停顿 {think_time} 秒")
 
-        except Exception as e:
-            tqdm.tqdm.write(f"遇到错误: {e}")
-            continue
+    #     except Exception as e:
+    #         tqdm.tqdm.write(f"遇到错误: {e}")
+    #         continue
 
-        # 模拟随机休眠，休眠时间较长
-        sleep_time = random_sleep(10, 60, variation_factor=2)  # 10-60秒的休眠，并有一定随机波动
-        tqdm.tqdm.write(f"休眠 {sleep_time} 秒")
+    #     # 模拟随机休眠，休眠时间较长
+    #     sleep_time = random_sleep(10, 60, variation_factor=2)  # 10-60秒的休眠，并有一定随机波动
+    #     tqdm.tqdm.write(f"休眠 {sleep_time} 秒")
 
-                # HoleCityDown(city)  # 下载区域住房数据
+    #             # HoleCityDown(city)  # 下载区域住房数据
     
-    # 下载区域住房数据
-    for city in tqdm.tqdm(city_list, desc="正在处理城市数据"):
-        tqdm.tqdm.write(f"开始处理城市: {city}")
+    # # 下载区域住房数据
+    # for city in tqdm.tqdm(city_list, desc="正在处理城市数据"):
+    #     tqdm.tqdm.write(f"开始处理城市: {city}")
 
-        try:
-            # 模拟人类的短暂思考/延迟
-            think_time = random_think()
-            tqdm.tqdm.write(f"模拟思考 {think_time} 秒")
+    #     try:
+    #         # 模拟人类的短暂思考/延迟
+    #         think_time = random_think()
+    #         tqdm.tqdm.write(f"模拟思考 {think_time} 秒")
 
-            HoleCityDown(city)  # 下载区域住房数据
+    #         HoleCityDown(city)  # 下载区域住房数据
 
-            # 在下载数据间加入短暂停顿
-            think_time = random_think()
-            tqdm.tqdm.write(f"模拟短暂停顿 {think_time} 秒")
+    #         # 在下载数据间加入短暂停顿
+    #         think_time = random_think()
+    #         tqdm.tqdm.write(f"模拟短暂停顿 {think_time} 秒")
 
-        except Exception as e:
-            tqdm.tqdm.write(f"遇到错误: {e}")
-            continue
+    #     except Exception as e:
+    #         tqdm.tqdm.write(f"遇到错误: {e}")
+    #         continue
 
-        # 模拟随机休眠，休眠时间较长
-        sleep_time = random_sleep(10, 60, variation_factor=2)  # 10-60秒的休眠，并有一定随机波动
-        tqdm.tqdm.write(f"休眠 {sleep_time} 秒")
+    #     # 模拟随机休眠，休眠时间较长
+    #     sleep_time = random_sleep(10, 60, variation_factor=2)  # 10-60秒的休眠，并有一定随机波动
+    #     tqdm.tqdm.write(f"休眠 {sleep_time} 秒")
     
-    tqdm.tqdm.write("全部城市数据处理完成！")
+    # tqdm.tqdm.write("全部城市数据处理完成！")
 
