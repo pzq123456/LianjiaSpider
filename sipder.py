@@ -1,6 +1,5 @@
 import hashlib
 import random
-import sqlite3
 import time
 import requests
 import os
@@ -12,6 +11,10 @@ PATH1 = os.path.join(PATH, 'data', 'district_bounds.csv')
 
 SAVE_PATH = os.path.join(PATH, 'result', 'test.txt')
 
+proxies = {
+    'http': 'http://localhost:7890',
+    'https': 'http://localhost:7890'
+}
 
 def ua():
     """随机获取一个浏览器用户信息"""
@@ -29,9 +32,7 @@ def ua():
 
     agent = random.choice(user_agents)
 
-    return {
-        'User-Agent': agent
-    }
+    return agent
 
 class Agnet():
     def __init__(self) -> None:
@@ -62,10 +63,88 @@ class Agnet():
     def getURL(self, city_id, max_lat, min_lat, max_lng, min_lng):
         return self.url % (city_id, 'ESF', max_lat, min_lat, max_lng, min_lng, 'community', self.getTimestamp())
 
+
+def load_json(file_path):
+    with open(file_path, 'r') as f:
+        return json.load(f)
+    
+def save_json(file_path, data):
+    # 保存为 utf-8 格式
+    with open(file_path, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)
+
+def process_json(json_data):
+    # 根据 data "totalCount" 字段
+    totalCount = json_data['data']['totalCount']
+
+    if totalCount == 0:
+        # 报错
+        raise Exception('No data found')
+    else:
+        # 解析数据
+        return json_paser(json_data['data']["bubbleList"])
+
+def json_paser(data):
+    pass
+    # "bubbleList": [
+    # {
+    #     "fullSpell": "c1111027375552",
+    #     "desc": "5.9万(106套)",
+    #     "count": 106,
+    #     "countStr": "106套",
+    #     "countUnit": "套",
+    #     "price": "58933",
+    #     "priceStr": "5.9万",
+    #     "priceUnit": "元",
+    #     "border": "116.449769,39.874743;116.449603,39.874082;116.449594,39.873462;116.451701,39.873407;116.451678,39.873961;116.450825,39.874708",
+    #     "bubbleDesc": "10AM新坐标",
+    #     "icon": "",
+    #     "entityId": "1111027375552",
+    #     "entityType": "resblock",
+    #     "id": 1111027375552,
+    #     "name": "10AM新坐标",
+    #     "longitude": 116.45053,
+    #     "latitude": 39.874376,
+    #     "imageType": 30002,
+    #     "selected": false
+    # },
+
+def get_grids(max_lat, min_lat, max_lng, min_lng, step=0.1):
+    # 生成网格 从左上角开始
+    grids = []
+    for i in range(int((max_lat - min_lat) / step) + 1):
+        for j in range(int((max_lng - min_lng) / step) + 1):
+            lat1 = max_lat - i * step       # 左上角纬度
+            lat2 = max_lat - (i + 1) * step # 左下角纬度
+            lng1 = min_lng + j * step       # 左上角经度
+            lng2 = min_lng + (j + 1) * step # 右上角经度
+            grids.append([lat1, lat2, lng1, lng2])
+    return grids
+
 if __name__ == '__main__':
     df = pd.read_csv(PATH1)
     # 打印第一行数据
     # print(df.head(2))
     agent = Agnet()
 
-    print(agent.getURL(df['city_id'][0], df['max_lat'][0], df['min_lat'][0], df['max_lng'][0], df['min_lng'][0]))
+    # 生成网格
+    # grids = get_grids(df['max_lat'][0], df['min_lat'][0], df['max_lng'][0], df['min_lng'][0])
+    # print(len(grids))
+
+    # for grid in grids:
+    #     # print(grid)
+    #     request_url = agent.getURL(df['city_id'][0], grid[0], grid[1], grid[2], grid[3])
+    #     print(request_url)
+
+    request_url = agent.getURL(df['city_id'][0], df['max_lat'][0], df['min_lat'][0], df['max_lng'][0], df['min_lng'][0])
+    print(request_url)
+    # response = requests.get(request_url, headers=agent.header, proxies=proxies)
+    # save the response
+    # with open(SAVE_PATH, 'w') as f:
+    #     f.write(response.text)
+
+    # json_data = load_json(SAVE_PATH)
+    # print(json_data)
+    # save_json(SAVE_PATH, json_data)
+
+

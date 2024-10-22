@@ -10,3 +10,9 @@ data/*
 !data/city_dict.txt
 !data/district_bounds.csv
 !data/example.json
+
+log/*
+
+result/*
+!result/test.txt
+!result/error.txt
