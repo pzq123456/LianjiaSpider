@@ -8,3 +8,4 @@ __pycache__/
 data/*
 !data/city_bounds.csv
 !data/city_dict.txt
+!data/district_bounds.csv

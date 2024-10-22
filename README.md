@@ -1,5 +1,5 @@
 # LianJiaSpider速度一分钟1000+
-
+https://github.com/linpingta/lianjia-eroom-analysis/issues
 # 前言
 + 利用[此网页](https://sh.lianjia.com/ditu/)接口实现功能 
 + 目前支持的城市 上海 北京 广州 深圳 烟台 厦门 长沙 郑州 请把你需要的城市发为Issues我会时常看
