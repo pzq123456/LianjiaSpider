@@ -5,13 +5,14 @@ import tqdm
 import random
 from log import get_logger, save_checkpoint
 
-def random_sleep(min_time=1, max_time=5):
+def random_sleep(min_time=30, max_time=300):
     """随机休眠一段时间
     Args:
         min_time (int, optional): _description_. Defaults to 1.
         max_time (int, optional): _description_. Defaults to 60.
     """
     sleeptime = random.uniform(min_time, max_time)
+    tqdm.tqdm.write(f"Sleeping for {sleeptime:.2f} seconds")
     time.sleep(sleeptime)
     return sleeptime
 
@@ -22,7 +23,7 @@ def generate_district_files(csv_path, base_path, logger, content_generator=None)
 
     # 读取 CSV 数据
     df = pd.read_csv(csv_path)
-    df = df.head(20)  # 仅保留前20行
+    # df = df.head(3)  
     os.makedirs(base_path, exist_ok=True)
 
     for city in tqdm.tqdm(df['city_name'].unique(), desc="Processing"):
@@ -51,7 +52,7 @@ def generate_district_files(csv_path, base_path, logger, content_generator=None)
                 sleep_time = random_sleep()
                 logger.info(f"Sleeping for {sleep_time:.2f} seconds")
 
-def default_content_generator(row,save_path):
+def default_content_generator(row, save_path):
     # 有一定概率生成错误的内容
     if random.random() < 0.1:
         raise Exception("Random error")

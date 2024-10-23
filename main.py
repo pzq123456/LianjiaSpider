@@ -1,87 +1,51 @@
-from lianjia import SaveCityBorderIntoDB, HoleCityDown
-from city_dict import get_city_list
-
-import pandas as pd
-import tqdm
-
-import time
+import json
+import os
 import random
+import pandas as pd
+import requests
+from log import get_logger
+from manager import generate_district_files
+from sipder import Agnet, process_json
 
-# 随机休眠时间
-def random_sleep(min_time=1, max_time=5, variation_factor=1.5):
-    """
-    模拟人类行为的随机休眠时间
-    :param min_time: 最小休眠时间，默认1秒
-    :param max_time: 最大休眠时间，默认5秒
-    :param variation_factor: 控制休眠时间的波动幅度，默认1.5倍
-    :return: 实际休眠时间
-    """
-    # 生成随机的休眠时间，并加入一些变化
-    sleep_time = random.uniform(min_time, max_time) * random.uniform(1, variation_factor)
-    time.sleep(sleep_time)
-    return round(sleep_time, 2)
+def load_json(file_path):
+    with open(file_path, 'r', encoding='utf-8') as f:  # 指定编码为 utf-8
+        return json.load(f)
 
-# 休眠时间的模拟人类操作
-def random_think(min_time=0.5, max_time=2):
-    """
-    模拟思考、处理的短暂停顿
-    """
-    sleep_time = random.uniform(min_time, max_time)
-    time.sleep(sleep_time)
-    return round(sleep_time, 2)
+def ping_pong():
+    # 请求某一个网址 以确定是否存在网络连接
+    try:
+        response = requests.get('https://www.baidu.com')
+        if response.status_code == 200:
+            return True
+    except:
+        return False
 
-if __name__ == '__main__':
-    # city_list = get_city_list()  # 获取城市列表
-    # print(city_list[1])
-    SaveCityBorderIntoDB('北京')  # 下载城市区域数据
-
-    # # tqdm 进度条循环显示城市名称
-    # for city in tqdm.tqdm(city_list, desc="正在处理城市数据"):
-    #     tqdm.tqdm.write(f"开始处理城市: {city}")
-
-    #     try:
-    #         # 模拟人类的短暂思考/延迟
-    #         think_time = random_think()
-    #         tqdm.tqdm.write(f"模拟思考 {think_time} 秒")
-
-    #         SaveCityBorderIntoDB(city)  # 下载城市区域数据
-
-    #         # 在下载数据间加入短暂停顿
-    #         think_time = random_think()
-    #         tqdm.tqdm.write(f"模拟短暂停顿 {think_time} 秒")
-
-    #     except Exception as e:
-    #         tqdm.tqdm.write(f"遇到错误: {e}")
-    #         continue
-
-    #     # 模拟随机休眠，休眠时间较长
-    #     sleep_time = random_sleep(10, 60, variation_factor=2)  # 10-60秒的休眠，并有一定随机波动
-    #     tqdm.tqdm.write(f"休眠 {sleep_time} 秒")
-
-    #             # HoleCityDown(city)  # 下载区域住房数据
+if __name__ == "__main__":
+    PATH = os.path.join(os.path.dirname(__file__))
+    PATH1 = os.path.join(PATH, 'data', 'district_bounds.csv')
+    BASE_PATH = os.path.join(PATH, 'result')
     
-    # # 下载区域住房数据
-    # for city in tqdm.tqdm(city_list, desc="正在处理城市数据"):
-    #     tqdm.tqdm.write(f"开始处理城市: {city}")
+    SAVE_PATH = os.path.join(PATH, 'result', 'test.txt')
 
-    #     try:
-    #         # 模拟人类的短暂思考/延迟
-    #         think_time = random_think()
-    #         tqdm.tqdm.write(f"模拟思考 {think_time} 秒")
-
-    #         HoleCityDown(city)  # 下载区域住房数据
-
-    #         # 在下载数据间加入短暂停顿
-    #         think_time = random_think()
-    #         tqdm.tqdm.write(f"模拟短暂停顿 {think_time} 秒")
-
-    #     except Exception as e:
-    #         tqdm.tqdm.write(f"遇到错误: {e}")
-    #         continue
-
-    #     # 模拟随机休眠，休眠时间较长
-    #     sleep_time = random_sleep(10, 60, variation_factor=2)  # 10-60秒的休眠，并有一定随机波动
-    #     tqdm.tqdm.write(f"休眠 {sleep_time} 秒")
+    logger = get_logger()
     
-    # tqdm.tqdm.write("全部城市数据处理完成！")
+    # generate_district_files(PATH1, BASE_PATH, logger)
 
+    df = pd.read_csv(PATH1)
+
+    agent = Agnet()
+
+    def default_content_generator(row, save_path):
+        
+        # if not ping_pong():
+        #     raise Exception("No network connection")
+        # return
+
+        request_url = agent.getURL(row['city_id'], row['max_lat'], row['min_lat'], row['max_lng'], row['min_lng'])
+        response = requests.get(request_url, headers=agent.headers)
+        data = response.json()
+        # print(data)
+        result = process_json(data)
+        result.to_csv(save_path, index=False)
+
+    generate_district_files(PATH1, BASE_PATH, logger, default_content_generator)

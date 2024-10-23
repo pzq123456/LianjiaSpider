@@ -39,7 +39,7 @@ class Agnet():
         # https://map.ke.com/proxyApi/i.c-pc-webapi.ke.com/map/bubblelist?cityId={cityId}&dataSource={dataSource}&condition={condition}&id={id}&groupType={groupType}&maxLatitude={maxLatitude}&minLatitude={minLatitude}&maxLongitude={maxLongitude}&minLongitude={minLongitude}
         self.url = 'https://map.ke.com/proxyApi/i.c-pc-webapi.ke.com/map/bubblelist?cityId=%s&dataSource=%s&maxLatitude=%s&minLatitude=%s&maxLongitude=%s&minLongitude=%s&groupType=%s&request_ts=%s'
         
-        self.header = {
+        self.headers = {
             'Accept': 'application/json, text/plain, */*',
             'Accept-Encoding': 'gzip, deflate, br',
             'Accept-Language': 'zh-CN,zh-Hans;q=0.9',
@@ -85,29 +85,8 @@ def process_json(json_data):
         return json_paser(json_data['data']["bubbleList"])
 
 def json_paser(data):
-    pass
-    # "bubbleList": [
-    # {
-    #     "fullSpell": "c1111027375552",
-    #     "desc": "5.9万(106套)",
-    #     "count": 106,
-    #     "countStr": "106套",
-    #     "countUnit": "套",
-    #     "price": "58933",
-    #     "priceStr": "5.9万",
-    #     "priceUnit": "元",
-    #     "border": "116.449769,39.874743;116.449603,39.874082;116.449594,39.873462;116.451701,39.873407;116.451678,39.873961;116.450825,39.874708",
-    #     "bubbleDesc": "10AM新坐标",
-    #     "icon": "",
-    #     "entityId": "1111027375552",
-    #     "entityType": "resblock",
-    #     "id": 1111027375552,
-    #     "name": "10AM新坐标",
-    #     "longitude": 116.45053,
-    #     "latitude": 39.874376,
-    #     "imageType": 30002,
-    #     "selected": false
-    # },
+    df = pd.DataFrame(data)
+    return df
 
 def get_grids(max_lat, min_lat, max_lng, min_lng, step=0.1):
     # 生成网格 从左上角开始
@@ -123,28 +102,10 @@ def get_grids(max_lat, min_lat, max_lng, min_lng, step=0.1):
 
 if __name__ == '__main__':
     df = pd.read_csv(PATH1)
-    # 打印第一行数据
-    # print(df.head(2))
+
     agent = Agnet()
-
-    # 生成网格
-    # grids = get_grids(df['max_lat'][0], df['min_lat'][0], df['max_lng'][0], df['min_lng'][0])
-    # print(len(grids))
-
-    # for grid in grids:
-    #     # print(grid)
-    #     request_url = agent.getURL(df['city_id'][0], grid[0], grid[1], grid[2], grid[3])
-    #     print(request_url)
 
     request_url = agent.getURL(df['city_id'][0], df['max_lat'][0], df['min_lat'][0], df['max_lng'][0], df['min_lng'][0])
     print(request_url)
-    # response = requests.get(request_url, headers=agent.header, proxies=proxies)
-    # save the response
-    # with open(SAVE_PATH, 'w') as f:
-    #     f.write(response.text)
-
-    # json_data = load_json(SAVE_PATH)
-    # print(json_data)
-    # save_json(SAVE_PATH, json_data)
 
 
