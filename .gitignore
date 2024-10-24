@@ -2,6 +2,8 @@
 __pycache__/
 *.pyc
 
+.venv/
+
 .DS_Store
 .idea/
 
@@ -10,6 +12,7 @@ data/*
 !data/city_dict.txt
 !data/district_bounds.csv
 !data/example.json
+!data/citys.csv
 
 log/*
 

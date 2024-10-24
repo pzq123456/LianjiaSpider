@@ -1,6 +1,6 @@
 import json
 import os
-import random
+
 import pandas as pd
 import requests
 from log import get_logger

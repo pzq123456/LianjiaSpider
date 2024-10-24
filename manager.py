@@ -5,7 +5,7 @@ import tqdm
 import random
 from log import get_logger, save_checkpoint
 
-def random_sleep(min_time=30, max_time=300):
+def random_sleep(min_time=30, max_time=60):
     """随机休眠一段时间
     Args:
         min_time (int, optional): _description_. Defaults to 1.

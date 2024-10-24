@@ -7,6 +7,7 @@ PATH = os.path.dirname(os.path.abspath(__file__))
 PATH1 = os.path.join(PATH,"data","cn_city.geojson")
 # data\district.geojson
 PATH2 = os.path.join(PATH,"data","district.geojson")
+PATH3 = os.path.join(PATH,"data","citys.csv")
 
 SAVED_PATH1 = os.path.join(PATH,"data","city_bounds.csv")
 SAVED_PATH2 = os.path.join(PATH,"data","city_dict.txt")
@@ -103,7 +104,13 @@ def process_district_to_dict_and_csv(geojson_file, csv_output, dict_output):
     for _, row in tqdm(gdf.iterrows(), total=len(gdf), desc="Processing districts"):
         district_name = row["dt_name"]
         city_name = row["ct_name"]
-        pr_adcode = row["pr_adcode"]
+
+        # 直辖市列表
+        if city_name in ["北京城区", "上海城区", "天津城区", "重庆城区"]:
+            pr_adcode = row["pr_adcode"]
+        else:
+            pr_adcode = row["ct_adcode"]
+
         bounds = row.geometry.bounds
         min_lng, min_lat, max_lng, max_lat = bounds
         csv_data.append({
@@ -118,8 +125,6 @@ def process_district_to_dict_and_csv(geojson_file, csv_output, dict_output):
     df = pd.DataFrame(csv_data)
     df.to_csv(csv_output, index=False)
 
-    return district_dict
-
 
 def get_whole_cn_city_dict():
     # if not os.path.exists(SAVED_PATH2):
@@ -127,6 +132,15 @@ def get_whole_cn_city_dict():
     city_dict = read_dict(SAVED_PATH2)
     return city_dict
 
+# 仅仅筛选链家数据库中记录的城市
+def drop_non_lj_city():
+    # 读取 csv 
+    district_df = pd.read_csv(SAVED_PATH3)
+    # 读取链家城市表
+    lj_city_list = pd.read_csv(PATH3)["name"].tolist()
+    # 筛选
+    district_df = district_df[district_df["city_name"].isin(lj_city_list)]
+    district_df.to_csv(SAVED_PATH3, index=False)
 
 if __name__ == "__main__":
     # process_geojson_to_dict_and_csv(PATH1, SAVED_PATH1, SAVED_PATH2)
@@ -134,6 +148,8 @@ if __name__ == "__main__":
     # print(city_dict)
 
     process_district_to_dict_and_csv(PATH2, SAVED_PATH3, SAVED_PATH4)
-    district_dict = read_dict(SAVED_PATH4)
-    print(district_dict[0])
+    # district_dict = read_dict(SAVED_PATH4)
+    # print(district_dict[0])
+
+    drop_non_lj_city()
 
